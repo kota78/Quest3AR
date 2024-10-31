@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import math
 import numpy as np
 import cv2
 from cv2 import aruco
@@ -8,8 +9,12 @@ import threading
 import time
 
 # UDP送信設定
-UDP_IP = "127.0.0.1"
-UDP_PORT = 12345
+# UDP_IP = "192.168.11.4"
+UDP_IP = "192.168.11.30"
+# UDP_IP = "172.20.10.4"
+
+# UDP_IP = "127.0.0.1"
+UDP_PORT = 50000
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -22,14 +27,22 @@ def main():
     marker_length = 0.056 # [m]
     # マーカーの辞書選択
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
-
-    camera_matrix = np.array([[1.33168655e+03,0.00000000e+00,9.54841857e+02],
-                              [0.00000000e+00,1.33162266e+03,5.60401382e+02],
-                              [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
-    distortion_coeff = np.array([-0.35524981,0.01349514,-0.00471847,0.00897172,0.13142206])
+    
+    # 自前Webカメラの内部パラメータ
+    # camera_matrix = np.array([[1.33168655e+03,0.00000000e+00,9.54841857e+02],
+    #                           [0.00000000e+00,1.33162266e+03,5.60401382e+02],
+    #                           [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
+    # distortion_coeff = np.array([-0.35524981,0.01349514,-0.00471847,0.00897172,0.13142206])
+    
+    # 小型カメラの内部パラメータ
+    camera_matrix = np.array([[464.76830292,0,512.35210634],
+                              [0,469.61837529,385.2203724],
+                              [0, 0, 1]])
+    distortion_coeff = np.array([-0.3136963, 0.10256045, -0.01269226, 0.00985827, -0.01445209])
 
     while True:
         ret, img = cap.read()
+        img = cv2.flip(img, -1)
         corners, ids, rejectedImgPoints = aruco.detectMarkers(img, dictionary)
         # 可視化
         aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
@@ -56,12 +69,12 @@ def main():
                 euler_angle = cv2.decomposeProjectionMatrix(proj_matrix)[6]  # [deg]
 
                 posX, posY, posZ = tvec[0], -tvec[1], tvec[2]  # Y座標を反転
-                rotX, rotY, rotZ = -euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]  # ピッチ軸を反転
+                rotX, rotY, rotZ = -euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]  # ロール軸を反転
 
-                print(f"x: {posX}, y: {posY}, z: {posZ}, roll: {rotX}, pitch: {rotY}, yaw: {rotZ}")
+                print(f"x: {posX:.2f}, y: {posY:.2f}, z: {posZ:.2f}, roll: {round(rotX)}, pitch: {round(rotY)}, yaw: {round(rotZ)}")
 
                 # データ送信
-                data = f"{posX},{posY},{posZ},{rotX},{rotY},{rotZ}"
+                data = f"{posX:.2f},{posY:.2f},{posZ:.2f},{round(rotX)},{round(rotY)},{round(rotZ)}"
                 send_data(data)
 
                 # 可視化

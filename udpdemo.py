@@ -3,7 +3,8 @@ import threading
 import time
 
 UDP_IP = "127.0.0.1"
-UDP_PORT = 12345
+# UDP_IP = "192.168.11.30"
+UDP_PORT = 50000
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
