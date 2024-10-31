@@ -179,7 +179,7 @@ def main():
                 draw_pole_length = marker_length / 2  # 現実での長さ[m]
                 cv2.drawFrameAxes(img, camera_matrix, distortion_coeff, rvec, np.array([m_posX, -m_posY, m_posZ]), draw_pole_length)
 
-        cv2.imshow('drawDetectedMarkers', img)
+        # cv2.imshow('drawDetectedMarkers', img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
     cv2.destroyAllWindows()
