@@ -11,7 +11,7 @@ import time
 
 # UDP送信設定
 # UDP_IP = "192.168.11.4"
-UDP_IP = "192.168.11.17"
+UDP_IP = "192.168.11.99"
 # UDP_IP = "172.20.10.4"
 
 # UDP_IP = "127.0.0.1"
@@ -63,7 +63,9 @@ def main():
 
     cap = cv2.VideoCapture(0)
     # マーカーサイズ
-    marker_length = 0.056 # [m]
+    # marker_length = 0.056 # [m]
+    marker_length = 0.133 # [m]
+    
     # マーカーの辞書選択
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
 

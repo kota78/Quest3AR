@@ -12,10 +12,12 @@ client = kachaka_api.KachakaApiClient(KACHAKA_IP+":26400")
 def process_command(conn, data):
     try:
         match data:
-            case ["cancel"]:
+            case "cancel":
              client.cancel_command()
              conn.sendall(f"Processed command: cancel".encode('utf-8'))
-            case ["move", shelf, location]:
+            case "return_home":
+                 client.return_home()
+            case "bring_me_drink":
                  client.move_shelf("S01", "L01")
             case _:
                 raise ValueError(f"Unknown command: {data}")
@@ -46,7 +48,7 @@ def handle_connection(conn):
             if not data:
                 break
             data_str = data.decode('utf-8')
-            print("Received:", data_str)
+            print(data_str)
 
             # Start a new thread to process the received command
             threading.Thread(target=process_command, args=(conn, data_str)).start()
