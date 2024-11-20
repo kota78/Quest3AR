@@ -11,10 +11,10 @@ import time
 
 # UDP送信設定
 # UDP_IP = "192.168.11.4"
-# UDP_IP = "192.168.11.30"
+UDP_IP = "192.168.11.99"
 # UDP_IP = "172.20.10.4"
 
-UDP_IP = "127.0.0.1"
+# UDP_IP = "127.0.0.1"
 UDP_PORT = 50000
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -64,7 +64,7 @@ def main():
     data_writer.writerow(['posX', 'posY', 'posZ', 'rotX', 'rotY', 'rotZ'])
     filtered_writer.writerow(['posX', 'posY', 'posZ', 'rotX', 'rotY', 'rotZ'])
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     # マーカーサイズ
     marker_length = 0.056 # [m]
     # マーカーの辞書選択
