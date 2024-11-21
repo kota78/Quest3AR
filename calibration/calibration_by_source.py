@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import glob
 
-square_size = 2.0      # 正方形の1辺のサイズ[cm]
+square_size = 2.9      # 正方形の1辺のサイズ[cm]
 pattern_size = (6, 9)  # チェスボードの交差ポイント数
 
 # チェスボードの3D座標を設定 (Z=0)
