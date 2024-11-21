@@ -2,10 +2,7 @@ import socket
 import threading
 import time
 import kachaka_api
-
-PORT = 50001
-HOST = '0.0.0.0'
-KACHAKA_IP='192.168.11.27'
+from config import KACHAKA_IP, TCP_HOST_IP, TCP_PORT
 
 client = kachaka_api.KachakaApiClient(KACHAKA_IP+":26400")
 
@@ -31,7 +28,7 @@ def process_command(conn, data):
 
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((HOST, PORT))
+    server_socket.bind((TCP_HOST_IP, TCP_PORT))
     server_socket.listen(1)
     print("Waiting for connection...")
 

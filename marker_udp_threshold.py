@@ -6,16 +6,7 @@ import numpy as np
 import cv2
 from cv2 import aruco
 import socket
-import threading
-import time
-
-# UDP送信設定
-# UDP_IP = "192.168.11.4"
-UDP_IP = "192.168.11.99"
-# UDP_IP = "172.20.10.4"
-
-# UDP_IP = "127.0.0.1"
-UDP_PORT = 50000
+from config import UDP_IP, UDP_PORT
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 

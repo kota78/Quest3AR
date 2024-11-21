@@ -6,16 +6,8 @@ import numpy as np
 import cv2
 from cv2 import aruco
 import socket
-import threading
-import time
+from config import UDP_IP, UDP_PORT, CAMERA_MATRIX, DISTORTION_COEFF
 
-# UDP送信設定
-# UDP_IP = "192.168.11.4"
-UDP_IP = "192.168.11.99"
-# UDP_IP = "172.20.10.4"
-
-# UDP_IP = "127.0.0.1"
-UDP_PORT = 50000
 POSITION_THRESHOLD= 0.3
 ANGLE_THRESHOLD= 30.0
 
@@ -109,16 +101,16 @@ def main():
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
 
     # 自前Webカメラの内部パラメータ
-    # camera_matrix = np.array([[1.33168655e+03,0.00000000e+00,9.54841857e+02],
+    # CAMERA_MATRIX = np.array([[1.33168655e+03,0.00000000e+00,9.54841857e+02],
     #                           [0.00000000e+00,1.33162266e+03,5.60401382e+02],
     #                           [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
     # distortion_coeff = np.array([-0.35524981,0.01349514,-0.00471847,0.00897172,0.13142206])
 
     # 小型カメラの内部パラメータ
-    camera_matrix = np.array([[464.76830292,0,512.35210634],
-                              [0,469.61837529,385.2203724],
-                              [0, 0, 1]])
-    distortion_coeff = np.array([-0.3136963, 0.10256045, -0.01269226, 0.00985827, -0.01445209])
+    # CAMERA_MATRIX = np.array([[464.76830292,0,512.35210634],
+    #                           [0,469.61837529,385.2203724],
+    #                           [0, 0, 1]])
+    # distortion_coeff = np.array([-0.3136963, 0.10256045, -0.01269226, 0.00985827, -0.01445209])
     
     # フィルタ後の値の初期化
     m_posX = m_posY = m_posZ = None
@@ -135,7 +127,7 @@ def main():
             # マーカーごとに処理
             for i, corner in enumerate(corners):
                 # rvec -> rotation vector, tvec -> translation vector
-                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, marker_length, camera_matrix, distortion_coeff)
+                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, marker_length, CAMERA_MATRIX, DISTORTION_COEFF)
 
                 # 不要なaxisを除去
                 tvec = np.squeeze(tvec)
@@ -178,7 +170,7 @@ def main():
 
                 # 可視化
                 draw_pole_length = marker_length / 2  # 現実での長さ[m]
-                cv2.drawFrameAxes(img, camera_matrix, distortion_coeff, rvec, np.array([m_posX, -m_posY, m_posZ]), draw_pole_length)
+                cv2.drawFrameAxes(img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, np.array([m_posX, -m_posY, m_posZ]), draw_pole_length)
 
         # cv2.imshow('drawDetectedMarkers', img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
