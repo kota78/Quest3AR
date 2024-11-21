@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 from cv2 import aruco
 import socket
-from config import UDP_IP, UDP_PORT, CAMERA_MATRIX, DISTORTION_COEFF
+from config import UDP_IP, UDP_PORT, CAMERA_MATRIX, DISTORTION_COEFF, MARKER_LENGTH
 
 POSITION_THRESHOLD= 0.3
 ANGLE_THRESHOLD= 30.0
@@ -94,9 +94,6 @@ def main():
 
 
     cap = cv2.VideoCapture(0)
-    # マーカーサイズ
-    # marker_length = 0.056 # [m]
-    marker_length = 0.133 # [m]
     # マーカーの辞書選択
     dictionary = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
 
@@ -127,7 +124,7 @@ def main():
             # マーカーごとに処理
             for i, corner in enumerate(corners):
                 # rvec -> rotation vector, tvec -> translation vector
-                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, marker_length, CAMERA_MATRIX, DISTORTION_COEFF)
+                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, MARKER_LENGTH, CAMERA_MATRIX, DISTORTION_COEFF)
 
                 # 不要なaxisを除去
                 tvec = np.squeeze(tvec)
@@ -169,7 +166,7 @@ def main():
                 print(data)
 
                 # 可視化
-                draw_pole_length = marker_length / 2  # 現実での長さ[m]
+                draw_pole_length = MARKER_LENGTH / 2  # 現実での長さ[m]
                 cv2.drawFrameAxes(img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, np.array([m_posX, -m_posY, m_posZ]), draw_pole_length)
 
         # cv2.imshow('drawDetectedMarkers', img)
