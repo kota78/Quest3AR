@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-square_size = 2.0      # 正方形の1辺のサイズ[cm]
-pattern_size = (7, 7)  # 交差ポイントの数
+square_size = 2.9      # 正方形の1辺のサイズ[cm]
+pattern_size = (6, 9)  # 交差ポイントの数
 
 reference_img = 40 # 参照画像の枚数
 
@@ -18,12 +18,20 @@ objpoints = []
 imgpoints = []
 
 capture = cv2.VideoCapture(0)
+    # 解像度を設定
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, 3264)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 2448)
+# 実際に設定された解像度を取得
+actual_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+actual_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# 設定結果を確認
+print(f"{actual_width}x{actual_height}")
 
 while len(objpoints) < reference_img:
 # 画像の取得
     ret, img = capture.read()
-    height = img.shape[0]
-    width = img.shape[1]
+    height = 2448
+    width = 3264
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
