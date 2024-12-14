@@ -34,7 +34,6 @@ def main():
         aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
 
         if len(corners) > 0:
-            # マーカーごとに処理
             for i, corner in enumerate(corners):
                 rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corner, MARKER_LENGTH, CAMERA_MATRIX, DISTORTION_COEFF)
                 tvec = np.squeeze(tvec)
