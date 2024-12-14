@@ -51,10 +51,11 @@ def main():
                 # 不要なaxisを除去
                 tvec = np.squeeze(tvec)
                 rvec = np.squeeze(rvec)
-
                 posX, posY, posZ = tvec[0], tvec[1], tvec[2]
 
                 # # オイラー角を送信する場合
+                # rvec[0]=-rvec[0]？
+                # rvec[2]=-rvec[2]？
                 # rvec_matrix = cv2.Rodrigues(rvec) # 回転ベクトルからrodoriguesへ変換
                 # rvec_matrix = rvec_matrix[0] # rodoriguesから抜き出し
                 # transpose_tvec = tvec[np.newaxis, :].T # 並進ベクトルの転置

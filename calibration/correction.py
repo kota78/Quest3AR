@@ -3,7 +3,7 @@ import sys
 import cv2
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from config import CAMERA_MATRIX, DISTORTION_COEFF, OLD_CAMERA_MATRIX, OLD_DISTORTION_COEFF
+from config import CAMERA_MATRIX, DISTORTION_COEFF
 
 def main():
     # 画像ソースの切り替え
@@ -21,7 +21,7 @@ def main():
         capture.release()
     else:
         # ファイルから画像を読み込む
-        img = cv2.imread("source/i.jpg")
+        img = cv2.imread("calibration/captured_images/image_001.png")
         if img is None:
             print("Failed to load image from file.")
             exit()
@@ -30,8 +30,8 @@ def main():
     h, w = img.shape[:2]
 
     # 歪み補正: OLD_CAMERA_MATRIX と OLD_DISTORTION_COEFF を使用
-    old_new_camera_mtx, old_roi = cv2.getOptimalNewCameraMatrix(OLD_CAMERA_MATRIX, OLD_DISTORTION_COEFF, (w, h), 1, (w, h))
-    old_undistorted_img = cv2.undistort(img, OLD_CAMERA_MATRIX, OLD_DISTORTION_COEFF, None, old_new_camera_mtx)
+    old_new_camera_mtx, old_roi = cv2.getOptimalNewCameraMatrix(CAMERA_MATRIX, DISTORTION_COEFF, (w, h), 1, (w, h))
+    old_undistorted_img = cv2.undistort(img, CAMERA_MATRIX, DISTORTION_COEFF, None, old_new_camera_mtx)
 
     # 歪み補正: CAMERA_MATRIX と DISTORTION_COEFF を使用
     new_new_camera_mtx, new_roi = cv2.getOptimalNewCameraMatrix(CAMERA_MATRIX, DISTORTION_COEFF, (w, h), 1, (w, h))
