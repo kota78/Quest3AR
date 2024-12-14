@@ -36,11 +36,8 @@ def main():
         data_list = []
         ret, img = cap.read()
         img = cv2.flip(img, -1)
-        # camDetail = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        # print(camDetail)
 
         corners, ids, rejectedImgPoints = aruco.detectMarkers(img, dictionary)
-        # 可視化
         aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
 
         if len(corners) > 0:
@@ -84,8 +81,7 @@ def main():
                 # print(data)
 
                 # 可視化
-                draw_pole_length = MARKER_LENGTH / 2  # 現実での長さ[m]
-
+                draw_pole_length = MARKER_LENGTH / 2
                 cv2.drawFrameAxes(img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, tvec, draw_pole_length)
 
 
