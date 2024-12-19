@@ -12,7 +12,7 @@ from config import (
     get_camera_config,
 )
 
-CAMERA_ID = 1
+CAMERA_ID = 2
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -21,9 +21,15 @@ def send_data(data):
     sock.sendto(data.encode("utf-8"), (UDP_IP, UDP_PORT))
 
 
-# 角度を 0°から360°の範囲に正規化
-def normalize_angle(angle):
-    return angle % 360
+# クオータニオン間の角度
+def dist_q(q1, q2):
+    value = 2 * np.arccos(np.dot(q1.elements, q2.elements))
+    print(value)
+    return value
+
+
+def is_small_angle(q1, q2, threshold):
+    return abs(dist_q(q1, q2)) < threshold
 
 
 def main():
@@ -43,6 +49,7 @@ def main():
 
     # 処理時間を保存するリスト
     time_measurements = []
+    quaternion_map = {}
 
     while True:
         t1 = time.time()
@@ -50,9 +57,13 @@ def main():
         t2 = time.time()
         img = cv2.flip(img, -1)
         data_list = []
+        exceedCount = 0
+
+        ### 各マーカごとに閾値超えた回数をカウントする必要がありますね。。。
 
         corners, ids, rejectedImgPoints = aruco.detectMarkers(img, dictionary)
         if len(corners) > 0:
+            exceedCount = 0
             # マーカーごとに処理
             for i, corner in enumerate(corners):
                 rvec, tvec, _ = aruco.estimatePoseSingleMarkers(
@@ -68,8 +79,16 @@ def main():
                 rotation = R.from_rotvec(rvec)
                 # Rotationクラスのrotationオブジェクト -> クォータニオン
                 quaternion = rotation.as_quat()
-                data = f"{ids[i][0]},{posX},{posY},{posZ},{quaternion[0]},{quaternion[1]},{quaternion[2]},{quaternion[3]}"
-                data_list.append(data)
+                # クォータニオンの前回との差が角度が一定以上の場合送信しない
+                if (
+                    not is_small_angle(quaternion_map[str(ids[i][0])], quaternion, 30)
+                    and exceedCount < 5
+                ):
+                    exceedCount += 1
+                else:
+                    data = f"{ids[i][0]},{posX},{posY},{posZ},{quaternion[0]},{quaternion[1]},{quaternion[2]},{quaternion[3]}"
+                    data_list.append(data)
+                    quaternion_map[str(ids[i][0])] = quaternion
 
                 # 可視化
                 # aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))

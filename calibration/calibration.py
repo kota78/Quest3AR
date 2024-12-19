@@ -6,21 +6,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-square_size = 2.9      # 正方形の1辺のサイズ[cm]
+square_size = 2.9  # 正方形の1辺のサイズ[cm]
 pattern_size = (6, 9)  # 交差ポイントの数
 
-reference_img = 40 # 参照画像の枚数
+reference_img = 40  # 参照画像の枚数
 
-pattern_points = np.zeros( (np.prod(pattern_size), 3), np.float32 ) #チェスボード（X,Y,Z）座標の指定 (Z=0)
-pattern_points[:,:2] = np.indices(pattern_size).T.reshape(-1, 2)
+pattern_points = np.zeros(
+    (np.prod(pattern_size), 3), np.float32
+)  # チェスボード（X,Y,Z）座標の指定 (Z=0)
+pattern_points[:, :2] = np.indices(pattern_size).T.reshape(-1, 2)
 pattern_points *= square_size
 objpoints = []
 imgpoints = []
 
 capture = cv2.VideoCapture(0)
-    # 解像度を設定
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, 3264)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 2448)
+# 解像度を設定
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 768)
 # 実際に設定された解像度を取得
 actual_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
 actual_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -28,10 +30,10 @@ actual_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 print(f"{actual_width}x{actual_height}")
 
 while len(objpoints) < reference_img:
-# 画像の取得
+    # 画像の取得
     ret, img = capture.read()
-    height = 2448
-    width = 3264
+    height = 768
+    width = 1024
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -40,24 +42,28 @@ while len(objpoints) < reference_img:
     # コーナーがあれば
     if ret == True:
         print("detected coner!")
-        print(str(len(objpoints)+1) + "/" + str(reference_img))
+        print(str(len(objpoints) + 1) + "/" + str(reference_img))
         term = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_COUNT, 30, 0.1)
-        cv2.cornerSubPix(gray, corner, (5,5), (-1,-1), term)
-        imgpoints.append(corner.reshape(-1, 2))   #appendメソッド：リストの最後に因数のオブジェクトを追加
+        cv2.cornerSubPix(gray, corner, (5, 5), (-1, -1), term)
+        imgpoints.append(
+            corner.reshape(-1, 2)
+        )  # appendメソッド：リストの最後に因数のオブジェクトを追加
         objpoints.append(pattern_points)
 
-    cv2.imshow('image', img)
+    cv2.imshow("image", img)
     # 毎回判定するから 200 ms 待つ．遅延するのはココ
-    if cv2.waitKey(200) & 0xFF == ord('q'):
+    if cv2.waitKey(200) & 0xFF == ord("q"):
         break
 
 print("calculating camera parameter...")
 # 内部パラメータを計算
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
+    objpoints, imgpoints, gray.shape[::-1], None, None
+)
 
 # 計算結果を保存
-np.save("mtx", mtx) # カメラ行列
-np.save("dist", dist.ravel()) # 歪みパラメータ
+np.save("mtx", mtx)  # カメラ行列
+np.save("dist", dist.ravel())  # 歪みパラメータ
 # 計算結果を表示
 print("RMS = ", ret)
 print("mtx = \n", mtx)
