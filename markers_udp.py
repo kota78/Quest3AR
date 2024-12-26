@@ -59,11 +59,11 @@ def main():
                     corner, MARKER_LENGTH, CAMERA_MATRIX, DISTORTION_COEFF
                 )
                 # 可視化
-                aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
-                draw_pole_length = MARKER_LENGTH / 2
-                cv2.drawFrameAxes(
-                    img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, tvec, draw_pole_length
-                )
+                # aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
+                # draw_pole_length = MARKER_LENGTH / 2
+                # cv2.drawFrameAxes(
+                #     img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, tvec, draw_pole_length
+                # )
 
                 # 不要なaxisを除去
                 tvec = np.squeeze(tvec)
@@ -90,7 +90,7 @@ def main():
         time_measurements.append([t2 - t1, t3 - t2, t4 - t3, t4 - t1])
 
         # 可視化
-        cv2.imshow("drawDetectedMarkers", img)
+        # cv2.imshow("drawDetectedMarkers", img)
 
         if cv2.waitKey(10) & 0xFF == ord("q"):
             break
@@ -99,19 +99,19 @@ def main():
     cv2.destroyAllWindows()
 
     # 処理時間をCSVファイルに書き込む
-    with open(
-        "processing_times_" + str(CAMERA_ID) + ".csv", "w", newline=""
-    ) as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(
-            [
-                "Frame Capture (t2-t1)",
-                "Processing (t3-t2)",
-                "Sending (t4-t3)",
-                "Total Time (t4-t1)",
-            ]
-        )
-        csv_writer.writerows(time_measurements)
+    # with open(
+    #     "processing_times_" + str(CAMERA_ID) + ".csv", "w", newline=""
+    # ) as csvfile:
+    #     csv_writer = csv.writer(csvfile)
+    #     csv_writer.writerow(
+    #         [
+    #             "Frame Capture (t2-t1)",
+    #             "Processing (t3-t2)",
+    #             "Sending (t4-t3)",
+    #             "Total Time (t4-t1)",
+    #         ]
+    #     )
+    #     csv_writer.writerows(time_measurements)
 
 
 if __name__ == "__main__":
