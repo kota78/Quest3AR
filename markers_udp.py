@@ -12,7 +12,7 @@ from config import (
     get_camera_config,
 )
 
-CAMERA_ID = 1
+CAMERA_ID = 2
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -58,6 +58,13 @@ def main():
                 rvec, tvec, _ = aruco.estimatePoseSingleMarkers(
                     corner, MARKER_LENGTH, CAMERA_MATRIX, DISTORTION_COEFF
                 )
+                # 可視化
+                aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
+                draw_pole_length = MARKER_LENGTH / 2
+                cv2.drawFrameAxes(
+                    img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, tvec, draw_pole_length
+                )
+
                 # 不要なaxisを除去
                 tvec = np.squeeze(tvec)
                 rvec = np.squeeze(rvec)
@@ -71,13 +78,6 @@ def main():
                 data = f"{ids[i][0]},{posX},{posY},{posZ},{quaternion[0]},{quaternion[1]},{quaternion[2]},{quaternion[3]}"
                 data_list.append(data)
 
-                # 可視化
-                # aruco.drawDetectedMarkers(img, corners, ids, (0, 255, 255))
-                # draw_pole_length = MARKER_LENGTH /
-                # cv2.drawFrameAxes(
-                #     img, CAMERA_MATRIX, DISTORTION_COEFF, rvec, tvec, draw_pole_length
-                # )
-
         t3 = time.time()
         if data_list:
             combined_data = ";".join(data_list)
@@ -90,7 +90,7 @@ def main():
         time_measurements.append([t2 - t1, t3 - t2, t4 - t3, t4 - t1])
 
         # 可視化
-        # cv2.imshow("drawDetectedMarkers", img)
+        cv2.imshow("drawDetectedMarkers", img)
 
         if cv2.waitKey(10) & 0xFF == ord("q"):
             break
@@ -99,7 +99,9 @@ def main():
     cv2.destroyAllWindows()
 
     # 処理時間をCSVファイルに書き込む
-    with open("processing_times.csv", "w", newline="") as csvfile:
+    with open(
+        "processing_times_" + str(CAMERA_ID) + ".csv", "w", newline=""
+    ) as csvfile:
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow(
             [

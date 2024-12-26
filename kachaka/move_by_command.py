@@ -1,25 +1,31 @@
+import os
 import socket
+import sys
 import threading
 import time
 import kachaka_api
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import KACHAKA_IP, TCP_HOST_IP, TCP_PORT
 
-client = kachaka_api.KachakaApiClient(KACHAKA_IP+":26400")
+client = kachaka_api.KachakaApiClient(KACHAKA_IP + ":26400")
+
 
 def process_command(conn, data):
     try:
         match data:
             case "cancel":
-             client.cancel_command()
-             conn.sendall(f"Processed command: cancel".encode('utf-8'))
+                client.cancel_command()
             case "return_home":
-                 client.return_home()
-            case "bring_me_drink":
-                 client.move_shelf("S01", "L01")
+                client.return_home()
+            case "move_to_sofa":
+                client.move_shelf("S01", "L01")
+            case "move_to_bed":
+                client.move_shelf("S01", "L02")
             case _:
                 raise ValueError(f"Unknown command: {data}")
     except Exception as e:
-        conn.sendall(f"Error in process_command: {e}".encode('utf-8'))
+        conn.sendall(f"Error in process_command: {e}".encode("utf-8"))
         print(f"Error in process_command: {e}")
     finally:
         conn.close()
@@ -38,13 +44,14 @@ def start_server():
         # Start a new thread to handle the connection
         threading.Thread(target=handle_connection, args=(conn,)).start()
 
+
 def handle_connection(conn):
     try:
         while True:
             data = conn.recv(1024)
             if not data:
                 break
-            data_str = data.decode('utf-8')
+            data_str = data.decode("utf-8")
             print(data_str)
 
             # Start a new thread to process the received command
@@ -54,6 +61,7 @@ def handle_connection(conn):
     finally:
         conn.close()
         print("Connection closed by main loop.")
+
 
 if __name__ == "__main__":
     start_server()
