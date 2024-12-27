@@ -12,7 +12,7 @@ from config import (
     get_camera_config,
 )
 
-CAMERA_ID = 2
+CAMERA_ID = 3
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
