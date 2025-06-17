@@ -10,7 +10,6 @@ from config import KACHAKA_IP, TCP_HOST_IP, TCP_PORT
 
 client = kachaka_api.KachakaApiClient(KACHAKA_IP + ":26400")
 
-
 def process_command(conn, data):
     try:
         match data:
@@ -21,7 +20,7 @@ def process_command(conn, data):
             case "move_to_sofa":
                 client.move_shelf("S01", "L01")
             case "move_to_bed":
-                client.move_shelf("S01", "L02")
+                client.move_shelf("S01", "L01")
             case _:
                 raise ValueError(f"Unknown command: {data}")
     except Exception as e:

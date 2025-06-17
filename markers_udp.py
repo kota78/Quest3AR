@@ -27,7 +27,7 @@ def normalize_angle(angle):
 
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     # 解像度を設定
     CAM_WIDTH, CAM_HEIGHT, CAMERA_MATRIX, DISTORTION_COEFF = get_camera_config(
         CAMERA_ID
